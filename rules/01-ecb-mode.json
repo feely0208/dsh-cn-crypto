@@ -1,0 +1,15 @@
+{
+  "id": "CRYPTO-ECB",
+  "title": "对称加密出现了 ECB 工作模式（含 Java Cipher.getInstance(\"AES\") 未指定模式，默认即 ECB）",
+  "severity": "high",
+  "source": "GB/T 39786-2018《信息安全技术 信息系统密码应用基本要求》密码应用技术要求 —— 密码算法与工作模式应符合国家密码管理部门的规定；GB/T 32907-2016《信息安全技术 SM4 分组密码算法》；OWASP Cryptographic Storage Cheat Sheet —— 不应使用 ECB 模式",
+  "advice": "ECB 是确定性模式：相同的明文分组永远加密成相同的密文分组，不隐藏数据的重复结构（经典演示是加密一张位图后轮廓仍然可见）。它没有链接、没有 IV，无法提供语义安全。做法：分组加密改用 CBC/CTR/GCM 这类带链接或带认证的模式；Java 里 Cipher.getInstance 必须写全四位「算法/模式/填充」（如 SM4/CBC/PKCS5Padding），只写 \"AES\" 时提供者默认落到 ECB/PKCS5Padding，属于最容易漏的写法。改用国密时对应 SM4/CBC 或 SM4/GCM。",
+  "check": {
+    "type": "file-pattern",
+    "pattern": "MODE_ECB|AESModeECB|EncryptionMode\\.ECB|\\bECB\\b|Cipher\\.getInstance\\(\\s*[\"']AES[\"']\\s*\\)",
+    "flags": "gi",
+    "exts": [".js", ".mjs", ".cjs", ".ts", ".mts", ".cts", ".tsx", ".jsx", ".java", ".kt", ".cs", ".py", ".go", ".rs", ".php", ".rb", ".c", ".h", ".cpp", ".hpp", ".scala", ".groovy"],
+    "when": "\\b(aes|des|3des|rc4|rsa|dsa|ecdh|ecdsa|md5|sha-?1|sha-?2|sha-?3|sm[234]|cipher|encrypt|decrypt|createcipher|createhash|messagedigest|hashlib|keypair|keygenerator|hmac|bcrypt|pbkdf2|argon2|ivparameterspec|crypto|gmssl|openssl)\\b",
+    "whenFlags": "i"
+  }
+}

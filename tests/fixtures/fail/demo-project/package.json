@@ -1,0 +1,19 @@
+{
+  "name": "order-gateway",
+  "version": "2.4.1",
+  "private": true,
+  "description": "订单网关 —— 商户号与卡号加密、订单签名",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "crypto-js": "^4.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.5"
+  },
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "CRYPTO-RSA-KEYLEN",
+  "title": "RSA 密钥长度出现了小于 2048 位的写法（512 / 1024 / 1536，含 modulusLength、keySize、initialize、genrsa 等参数位置）",
+  "severity": "high",
+  "source": "GB/T 32918.1-2016《信息安全技术 SM2 椭圆曲线公钥密码算法 第1部分：总则》；GB/T 39786-2018《信息安全技术 信息系统密码应用基本要求》密码应用技术要求 —— 公钥密码算法应符合国家密码管理部门的规定；OWASP Cryptographic Storage Cheat Sheet —— RSA 密钥长度不应低于 2048 位",
+  "advice": "1024 位 RSA 的估算安全强度只有约 80 位，早于 NIST 的停用时间表，也不再满足当前的合规基线；512 位更是在普通算力下可分解。做法：新系统直接用 2048 位及以上，或按 GB/T 32918 系列改用 SM2（国产椭圆曲线公钥算法，等效强度下密钥更短、签名更快）。存量系统要留出密钥轮换与证书重签的窗口 —— 只改生成参数不会让已签发的旧证书变强，必须重新生成密钥并重签。",
+  "check": {
+    "type": "file-pattern",
+    "pattern": "(moduluslength|keysize|key_size|modulus|rsa|keypair|genrsa)[^\\n]{0,60}?\\b(512|1024|1536)\\b|\\b(512|1024|1536)\\b[^\\n]{0,60}?(rsa|modulus|bits|bit key|密钥)",
+    "flags": "gi",
+    "exts": [".js", ".mjs", ".cjs", ".ts", ".mts", ".cts", ".tsx", ".jsx", ".java", ".kt", ".cs", ".py", ".go", ".rs", ".php", ".rb", ".c", ".h", ".cpp", ".hpp", ".sh", ".bash", ".yml", ".yaml", ".json", ".conf", ".properties", ".txt"],
+    "when": "\\b(aes|des|3des|rc4|rsa|dsa|ecdh|ecdsa|md5|sha-?1|sha-?2|sha-?3|sm[234]|cipher|encrypt|decrypt|createcipher|createhash|messagedigest|hashlib|keypair|keygenerator|hmac|bcrypt|pbkdf2|argon2|ivparameterspec|crypto|gmssl|openssl)\\b",
+    "whenFlags": "i"
+  }
+}

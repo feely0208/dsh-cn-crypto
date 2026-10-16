@@ -1,0 +1,23 @@
+{
+  "id": "CRYPTO-NO-SM",
+  "title": "项目里存在密码学代码，但全项目找不到 SM2 / SM3 / SM4 等国密算法的痕迹",
+  "severity": "medium",
+  "source": "《中华人民共和国密码法》第二十七条 —— 法律、行政法规和国家有关规定要求使用商用密码进行保护的关键信息基础设施，其运营者应当使用商用密码进行保护；GB/T 39786-2018《信息安全技术 信息系统密码应用基本要求》—— 密码算法应符合国家密码管理部门的规定；GB/T 32905-2016《SM3 密码杂凑算法》、GB/T 32907-2016《SM4 分组密码算法》、GB/T 32918 系列《SM2 椭圆曲线公钥密码算法》",
+  "advice": "本规则**只在检测到密码学代码时才运行**（识别标志：crypto / Cipher / encrypt / MessageDigest / hashlib 等）。国密不是所有项目都必须用 —— 只有涉及商用密码的场景（关键信息基础设施、等保三级及以上、金融/政务/能源等行业要求、需要过密评）才有强制要求。所以这条报出来是**提示确认**，不是判定违规：① 先确认本项目是否落在商用密码的应用范围内；② 若在范围内，把公钥算法换 SM2（GB/T 32918）、杂凑换 SM3（GB/T 32905）、分组加密换 SM4（GB/T 32907），并选用通过认证的密码模块；③ 若确实不涉及商用密码，可以忽略本条，并在项目文档里写明理由，便于日后密评时说明。",
+  "check": {
+    "type": "files-lack",
+    "pattern": "\\bsm[-_]?(2|3|4)\\b|国密|商用密码|gmssl|sm-crypto|GB/T\\s*3290[578]|GM/T\\s*000[239]",
+    "flags": "i",
+    "paths": [
+      "**/*.js", "**/*.mjs", "**/*.cjs", "**/*.ts", "**/*.mts", "**/*.cts", "**/*.jsx", "**/*.tsx",
+      "**/*.java", "**/*.kt", "**/*.cs", "**/*.py", "**/*.go", "**/*.rs", "**/*.php", "**/*.rb",
+      "**/*.c", "**/*.h", "**/*.cpp", "**/*.hpp", "**/*.swift", "**/*.dart", "**/*.scala", "**/*.groovy",
+      "**/*.vue", "**/*.ets", "**/*.lua", "**/*.sql",
+      "**/*.json", "**/*.xml", "**/*.gradle", "**/*.toml", "**/*.yml", "**/*.yaml",
+      "**/*.properties", "**/*.conf", "**/*.md", "**/*.txt", "**/pom.xml", "**/build.gradle"
+    ],
+    "evidence": "已检查项目内文件，未发现 SM2/SM3/SM4 或国密相关依赖与说明",
+    "when": "\\b(aes|des|3des|rc4|rsa|dsa|ecdh|ecdsa|md5|sha-?1|sha-?2|sha-?3|sm[234]|cipher|encrypt|decrypt|createcipher|createhash|messagedigest|hashlib|keypair|keygenerator|hmac|bcrypt|pbkdf2|argon2|ivparameterspec|crypto|gmssl|openssl)\\b",
+    "whenFlags": "i"
+  }
+}

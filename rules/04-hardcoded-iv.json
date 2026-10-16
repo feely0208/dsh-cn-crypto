@@ -1,0 +1,15 @@
+{
+  "id": "CRYPTO-HARDCODED-IV",
+  "title": "IV / 盐值（salt）以字符串字面量硬编码，或 Java 用 IvParameterSpec 直接包了字符串常量",
+  "severity": "high",
+  "source": "GB/T 39786-2018《信息安全技术 信息系统密码应用基本要求》密码应用技术要求 —— 密码算法的参数应按照标准规范正确使用；GB/T 32907-2016《信息安全技术 SM4 分组密码算法》—— 工作模式所需的初始向量应随机产生；OWASP Cryptographic Storage Cheat Sheet —— IV 与 salt 必须每次随机生成并随密文保存",
+  "advice": "IV 的作用就是让同一把密钥加密同一段明文产生不同密文。硬编码 IV 等于把这个作用取消：它变成密钥的一部分，且所有部署共用同一个值，「相同明文 → 相同密文」的规律会重新出现。盐值硬编码则让预计算攻击（彩虹表）长期有效。做法：加密时用密码学安全随机数生成 IV（Node 的 crypto.randomBytes、Java 的 SecureRandom、Python 的 os.urandom），随密文一起存储或传输；盐值每个口令独立随机、与口令哈希一起保存；绝不要把 IV/salt 写进代码或提交进仓库。",
+  "check": {
+    "type": "file-pattern",
+    "pattern": "\\b(iv|salt)\\b\\s*[:=]\\s*(new\\s+)?(buf|rb|b)?[\"'][^\"'\\n]{4,}[\"']|IvParameterSpec\\s*\\(\\s*[\"']|IvParameterSpec\\s*\\(\\s*new\\s+(byte|String)|\\bsetIV\\s*\\(\\s*[\"']",
+    "flags": "gi",
+    "exts": [".js", ".mjs", ".cjs", ".ts", ".mts", ".cts", ".tsx", ".jsx", ".java", ".kt", ".cs", ".py", ".go", ".rs", ".php", ".rb", ".c", ".h", ".cpp", ".hpp", ".json", ".yml", ".yaml", ".conf", ".properties", ".env", ".sh"],
+    "when": "\\b(aes|des|3des|rc4|rsa|dsa|ecdh|ecdsa|md5|sha-?1|sha-?2|sha-?3|sm[234]|cipher|encrypt|decrypt|createcipher|createhash|messagedigest|hashlib|keypair|keygenerator|hmac|bcrypt|pbkdf2|argon2|ivparameterspec|crypto|gmssl|openssl)\\b",
+    "whenFlags": "i"
+  }
+}

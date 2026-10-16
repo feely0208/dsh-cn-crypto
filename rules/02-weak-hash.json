@@ -1,0 +1,15 @@
+{
+  "id": "CRYPTO-WEAK-HASH",
+  "title": "出现了 MD5 / SHA-1 的调用点或算法名字符串（createHash、MessageDigest、hashlib、DigestUtils、CryptoJS，以及引号包起来的 md5 / sha1）",
+  "severity": "high",
+  "source": "GB/T 32905-2016《信息安全技术 SM3 密码杂凑算法》；GB/T 39786-2018《信息安全技术 信息系统密码应用基本要求》密码应用技术要求 —— 密码杂凑算法应符合国家密码管理部门的规定；OWASP Cryptographic Storage Cheat Sheet —— MD5 与 SHA-1 已不适用于口令与完整性保护",
+  "advice": "MD5 与 SHA-1 的碰撞攻击都已工程化（SHA-1 的 chosen-prefix 碰撞已有公开花费），不能再用于口令存储、签名、完整性校验这类安全用途。做法：口令不要直接用哈希，用专门的慢速口令派生（bcrypt/scrypt/Argon2id 或 PBKDF2 加足够迭代）；完整性/摘要改用 SM3（GB/T 32905）或 SHA-256 及以上。如果这里的 MD5 只是给缓存文件做去重、给对象存储算 ETag，那不属于安全用途，可以忽略本条并加注释说明。",
+  "check": {
+    "type": "file-pattern",
+    "pattern": "createHash\\(\\s*[\"'](md5|sha-?1)[\"']|MessageDigest\\.getInstance\\(\\s*[\"'](MD5|SHA-?1)[\"']|hashlib\\.(md5|sha1)\\s*\\(|DigestUtils\\.(md5|sha1|md5Hex|sha1Hex)|CryptoJS\\.(MD5|SHA1)|[\"'](md5|sha-?1)[\"']|\\b(md5|sha1)\\s*\\(",
+    "flags": "gi",
+    "exts": [".js", ".mjs", ".cjs", ".ts", ".mts", ".cts", ".tsx", ".jsx", ".java", ".kt", ".cs", ".py", ".go", ".rs", ".php", ".rb", ".c", ".h", ".cpp", ".hpp"],
+    "when": "\\b(aes|des|3des|rc4|rsa|dsa|ecdh|ecdsa|md5|sha-?1|sha-?2|sha-?3|sm[234]|cipher|encrypt|decrypt|createcipher|createhash|messagedigest|hashlib|keypair|keygenerator|hmac|bcrypt|pbkdf2|argon2|ivparameterspec|crypto|gmssl|openssl)\\b",
+    "whenFlags": "i"
+  }
+}
