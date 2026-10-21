@@ -1,5 +1,7 @@
 # @deepwhale-cn/dsh-cn-crypto
 
+[![dshfind 收录](https://dshfind.com/api/badge/feely0208/dsh-cn-crypto?lang=zh)](https://dshfind.com/zh/plugins/feely0208/dsh-cn-crypto)
+
 **该用国密的地方，有没有还在用国际算法。**
 
 **关键词**：国密 · 商用密码 · SM2 · SM3 · SM4 · 密评 · 密码应用安全性评估 · 等保密码要求 · GB/T 39786
